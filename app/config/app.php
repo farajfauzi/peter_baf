@@ -122,7 +122,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-		'Dingo\Api\Provider\ApiServiceProvider'
+		'Dingo\Api\Provider\ApiServiceProvider',
+		'Prettus\Repository\RepositoryServiceProvider',
 
 	),
 
