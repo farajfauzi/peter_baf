@@ -12,9 +12,7 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"prettus/laravel-repository": "2.0.*",
-		"dingo/api": "0.8.*"
-	},
-	"require-dev": {
+		"dingo/api": "0.8.*",
 	    "way/generators": "~2.0"
 	},
 	"autoload": {
