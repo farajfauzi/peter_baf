@@ -10,22 +10,16 @@ class NotesController extends \BaseController {
 	public function index()
 	{
 		try {
-			$response = Note::where('hapus', 1)->get();
+	        if ($user = \JWTAuth::parseToken()->authenticate()) {
+	        	
+	        	$response = Note::where('hapus', 1)->where('id_pegawai', $user->id)->get();
 
-			return $this->response->array($response->toArray());
-		} catch (Exception $e) {
-			throw new Exception("Error Processing Request", 1);
-		}
-	}
-
-	/**
-	 * Show the form for creating a new note
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		return View::make('notes.create');
+				return $this->response->array($response->toArray());
+	        }
+	    } catch (\Exception $e) {
+	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+	    	
+	    }
 	}
 
 	/**
@@ -36,29 +30,23 @@ class NotesController extends \BaseController {
 	public function store()
 	{
 		try {
-			$response = new Note;
+	        if ($user = \JWTAuth::parseToken()->authenticate()) {
+	        	
+	        	$response = new Note;
 
-			$response->id_pegawai = 1;
-			$response->judul = Input::get('title');
-			$response->isi   = Input::get('note');
-			$response->tanggal = date("YYYY-mm-dd");
+				$response->id_pegawai = $user->id;
+				$response->judul = Input::get('title');
+				$response->isi   = Input::get('note');
+				$response->tanggal = date("Y-m-d");
 
-			$response->save();
+				$response->save();
 
-			return $this->response->array($response->toArray());
-		} catch (Exception $e) {
-			return $e;// Exception("Error Processing Request", $e->getMessage());
-		}
-		// $validator = Validator::make($data = Input::all(), Note::$rules);
-
-		// if ($validator->fails())
-		// {
-		// 	return Redirect::back()->withErrors($validator)->withInput();
-		// }
-
-		// Note::create($data);
-
-		// return Redirect::route('notes.index');
+				return $this->response->array($response->toArray());
+	        }
+	    } catch (\Exception $e) {
+	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+	    	
+	    }
 	}
 
 	/**
@@ -70,47 +58,26 @@ class NotesController extends \BaseController {
 	public function show($id)
 	{
 		try {
-			$response = Note::findOrFail($id);
+	        if ($user = \JWTAuth::parseToken()->authenticate()) {
+	        	
+	        	$response = Note::findOrFail($id);
 
-			return $this->response->array($response->toArray());
-		} catch (Exception $e) {
-			throw new Exception("Error Processing Request", 1);
-		}
-	}
+	        	if ($response->id_pegawai != $user->id) {
+					throw new Dingo\Api\Exception\ResourceException("Bukan Notes Anda", 1);
+				}
 
-	/**
-	 * Show the form for editing the specified note.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		$note = Note::find($id);
+				if ($response->hapus === 0 ) {
+					throw new Dingo\Api\Exception\ResourceException("Notes Telah Dihapus", 1);
+				}
 
-		return View::make('notes.edit', compact('note'));
-	}
-
-	/**
-	 * Update the specified note in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		$note = Note::findOrFail($id);
-
-		$validator = Validator::make($data = Input::all(), Note::$rules);
-
-		if ($validator->fails())
-		{
-			return Redirect::back()->withErrors($validator)->withInput();
-		}
-
-		$note->update($data);
-
-		return Redirect::route('notes.index');
+				return $this->response->array($response->toArray());
+	        }
+	    } catch(\Dingo\Api\Exception\ResourceException $e) {
+	    	throw new Dingo\Api\Exception\ResourceException("Error Processing Request", $e->getMessage());
+	    }catch (\Exception $e) {
+	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+	    	
+	    }
 	}
 
 	/**
@@ -122,18 +89,26 @@ class NotesController extends \BaseController {
 	public function destroy($id)
 	{
 		try {
-			$response = Note::findOrFail($id);
-			$response->hapus = 0;
-			$response->save();
+	        if ($user = \JWTAuth::parseToken()->authenticate()) {
+	        	
+	        	$response = Note::findOrFail($id);
 
-			return $this->response->array($response->toArray());
-		} catch (Exception $e) {
-			return $e;
-			// throw new Exception("Error Processing Request", 1);
-		}
-		// Note::destroy($id);
+	        	if ($response->id_pegawai != $user->id) {
+					throw new Dingo\Api\Exception\ResourceException("Bukan Notes Anda", 1);
+				}
 
-		// return Redirect::route('notes.index');
+				if ($response->hapus === 0 ) {
+					throw new Dingo\Api\Exception\ResourceException("Notes Telah Dihapus", 1);
+				}
+				$response->hapus = 0;
+				$response->save();
+				return $this->response->array($response->toArray());
+	        }
+	    } catch(\Dingo\Api\Exception\ResourceException $e) {
+	    	throw new Dingo\Api\Exception\ResourceException("Error Processing Request", $e->getMessage());
+	    }catch (\Exception $e) {
+	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+	    	
+	    }
 	}
-
 }

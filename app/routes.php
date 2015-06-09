@@ -17,10 +17,12 @@ Route::get('/', function()
 });
 
 Route::api('v1', function () {
-	Route::group(['prefix' => 'api'], function ()
+	Route::group(['prefix' => 'api', 'protected' => true], function ()
 	{
 		Route::resource('notes', 'NotesController');
 		Route::resource('reports', 'ReportsController');
-		Route::resource('sop', 'SopController');
+
+		Route::post('login', ['uses' => 'PetugasController@login', 'protected' => false]);
 	});
+
 });

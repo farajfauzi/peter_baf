@@ -13,8 +13,9 @@
 
 App::before(function($request)
 {
+	//
 	header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT, PATCH');
     header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Request-With');
     header('Access-Control-Allow-Credentials: true');
 });
@@ -86,8 +87,94 @@ Route::filter('guest', function()
 
 Route::filter('csrf', function()
 {
-	if (Session::token() != Input::get('_token'))
+	if (Session::token() !== Input::get('_token'))
 	{
 		throw new Illuminate\Session\TokenMismatchException;
 	}
+});
+
+/*
+| General HttpException handler
+*/
+App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $e, $code)
+{
+	$headers = $e->getHeaders();
+
+	switch ($code) {
+		case 401:
+			$default_message = 'Invalid API key';
+			break;
+		
+		case 403:
+			$default_message = 'Insufficient privileges to perform this action';
+			break;
+
+		case 404:
+			$default_message = 'The requested resource was not found';
+			break;
+
+		default:
+			$default_message = 'An error was ecountered';
+			break;
+	}
+
+	return Response::json(array(
+		'error' => true,
+		'message' => $e->getMessage() ?: $default_message
+		), $code, $headers);
+});
+
+/**
+ * Permission Exception Handler
+ */
+App::error(function(App\Core\Services\Exceptions\PermissionException $e, $code)
+{
+  return Response::json($e->getMessage(), $e->getCode());
+});
+ 
+/**
+ * Validation Exception Handler
+ */
+App::error(function(App\Core\Services\Exceptions\ValidationException $e, $code)
+{
+  return Response::json($e->getMessages(), $code);
+});
+ 
+/**
+ * Not Found Exception Handler
+ */
+App::error(function(App\Core\Services\Exceptions\NotFoundException $e)
+{
+  return Response::json($e->getMessage(), $e->getCode());
+});
+
+/**
+ * Model Not Found Exception Handler
+ */
+App::error(function(Illuminate\Database\Eloquent\ModelNotFoundException $e)
+{
+    return Response::json(array(
+    	'status_code' 	=> 404,
+    	'message'		=> $e->getMessage()
+    ), 404);
+});
+
+App::error(function(Tymon\JWTAuth\Exceptions\JWTException $e, $code)
+{
+    if ($e instanceof Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+        return Response::json(['token_expired'], $e->getStatusCode());
+    } else if ($e instanceof Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+        return Response::json(['token_invalid'], $e->getStatusCode());
+    }
+});
+
+/**
+ * Model Not Found Exception Handler
+ */
+App::error(function(Dingo\Api\Exception\InvalidAcceptHeaderException $e)
+{
+    return Response::json(array(
+    	'status_code' 	=> 401,
+    	'message'		=> $e->getMessage()
+    ), 401);
 });

@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c1085f779d6106e73fec92906d86f0a9",
+    "hash": "e62596ec6e56fa440ffcf24d06ca2a94",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -89,16 +89,16 @@
         },
         {
             "name": "dingo/api",
-            "version": "v0.8.3",
+            "version": "dev-dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/dingo/api.git",
-                "reference": "7ea62887e0cec50d35ba9da2c52d3f2a06959b53"
+                "url": "https://github.com/khaeransori/api.git",
+                "reference": "1c0e60ed827432976bba06f2351250f3fb611723"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dingo/api/zipball/7ea62887e0cec50d35ba9da2c52d3f2a06959b53",
-                "reference": "7ea62887e0cec50d35ba9da2c52d3f2a06959b53",
+                "url": "https://api.github.com/repos/khaeransori/api/zipball/1c0e60ed827432976bba06f2351250f3fb611723",
+                "reference": "1c0e60ed827432976bba06f2351250f3fb611723",
                 "shasum": ""
             },
             "require": {
@@ -118,7 +118,7 @@
                 "mockery/mockery": "~0.9",
                 "phpunit/phpunit": "~4.0",
                 "squizlabs/php_codesniffer": "~2.0",
-                "tymon/jwt-auth": "0.4.*"
+                "tymon/jwt-auth": "0.3.*"
             },
             "suggest": {
                 "lucadegasperi/oauth2-server-laravel": "Use the League OAuth 2.0 server to protect your API.",
@@ -135,7 +135,11 @@
                     "Dingo\\Api\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Dingo\\Api\\Tests\\": "tests"
+                }
+            },
             "license": [
                 "BSD-3-Clause"
             ],
@@ -152,7 +156,10 @@
                 "laravel",
                 "restful"
             ],
-            "time": "2015-04-01 06:52:46"
+            "support": {
+                "source": "https://github.com/khaeransori/api/tree/dev-master"
+            },
+            "time": "2015-05-03 21:30:32"
         },
         {
             "name": "filp/whoops",
@@ -552,6 +559,56 @@
                 "psr-3"
             ],
             "time": "2015-03-09 09:58:04"
+        },
+        {
+            "name": "namshi/jose",
+            "version": "2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/namshi/jose.git",
+                "reference": "fbaecbc430ea2e26dabcb44d0f69ee4c071872b5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/namshi/jose/zipball/fbaecbc430ea2e26dabcb44d0f69ee4c071872b5",
+                "reference": "fbaecbc430ea2e26dabcb44d0f69ee4c071872b5",
+                "shasum": ""
+            },
+            "require": {
+                "lib-openssl": "*",
+                "php": ">=5.3.3",
+                "phpseclib/phpseclib": "~0.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.5",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Namshi\\JOSE": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alessandro Nadalin",
+                    "email": "alessandro.nadalin@gmail.com"
+                }
+            ],
+            "description": "JSON Object Signing and Encryption library for PHP.",
+            "keywords": [
+                "JSON Web Signature",
+                "JSON Web Token",
+                "JWS",
+                "json",
+                "jwt",
+                "token"
+            ],
+            "time": "2015-04-13 14:13:34"
         },
         {
             "name": "nesbot/carbon",
@@ -1020,23 +1077,23 @@
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.4.0",
+            "version": "v5.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f"
+                "reference": "0697e6aa65c83edf97bb0f23d8763f94e3f11421"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/31454f258f10329ae7c48763eb898a75c39e0a9f",
-                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/0697e6aa65c83edf97bb0f23d8763f94e3f11421",
+                "reference": "0697e6aa65c83edf97bb0f23d8763f94e3f11421",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "mockery/mockery": "~0.9.1"
+                "mockery/mockery": "~0.9.1,<0.9.4"
             },
             "type": "library",
             "extra": {
@@ -1065,10 +1122,11 @@
             "description": "Swiftmailer, free feature-rich PHP mailer",
             "homepage": "http://swiftmailer.org",
             "keywords": [
+                "email",
                 "mail",
                 "mailer"
             ],
-            "time": "2015-03-14 06:06:39"
+            "time": "2015-06-06 14:19:39"
         },
         {
             "name": "symfony/browser-kit",
@@ -1859,6 +1917,70 @@
             "time": "2015-01-03 15:23:51"
         },
         {
+            "name": "tymon/jwt-auth",
+            "version": "0.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tymondesigns/jwt-auth.git",
+                "reference": "c4689c01af1145fe4a1a48c2e187a896640a95d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tymondesigns/jwt-auth/zipball/c4689c01af1145fe4a1a48c2e187a896640a95d7",
+                "reference": "c4689c01af1145fe4a1a48c2e187a896640a95d7",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/http": "~4.0",
+                "illuminate/support": "~4.0",
+                "namshi/jose": "2.2.*",
+                "nesbot/carbon": "~1.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "illuminate/auth": "~4.0",
+                "illuminate/console": "~4.0",
+                "illuminate/database": "~4.0",
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Tymon\\JWTAuth\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sean Tymon",
+                    "email": "tymon148@gmail.com",
+                    "homepage": "http://tymondesigns.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "JSON Web Token Authentication for Laravel 4 and 5",
+            "homepage": "https://github.com/tymondesigns/jwt-auth",
+            "keywords": [
+                "Authentication",
+                "JSON Web Token",
+                "auth",
+                "authorization",
+                "jwt",
+                "laravel",
+                "tymon"
+            ],
+            "time": "2015-04-20 19:20:44"
+        },
+        {
             "name": "way/generators",
             "version": "2.6.1",
             "source": {
@@ -1910,7 +2032,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "dingo/api": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

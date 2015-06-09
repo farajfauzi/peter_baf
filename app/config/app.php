@@ -105,7 +105,8 @@ return array(
 		'Illuminate\Database\DatabaseServiceProvider',
 		'Illuminate\Encryption\EncryptionServiceProvider',
 		'Illuminate\Filesystem\FilesystemServiceProvider',
-		'Illuminate\Hashing\HashServiceProvider',
+		// 'Illuminate\Hashing\HashServiceProvider',
+		'App\Core\Services\Hasher\MD5HashServiceProvider',
 		'Illuminate\Html\HtmlServiceProvider',
 		'Illuminate\Log\LogServiceProvider',
 		'Illuminate\Mail\MailServiceProvider',
@@ -124,6 +125,7 @@ return array(
 		'Way\Generators\GeneratorsServiceProvider',
 		'Dingo\Api\Provider\ApiServiceProvider',
 		'Prettus\Repository\RepositoryServiceProvider',
+		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider'
 
 	),
 
@@ -192,6 +194,8 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
 		'API' 			  => 'Dingo\Api\Facade\API',
+		'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory'
 
 	),
 

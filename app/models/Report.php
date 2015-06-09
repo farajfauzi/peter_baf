@@ -45,7 +45,7 @@ class Report extends \Eloquent {
                     ->join('pakan', 'log_pakan.id_pakan', '=', 'pakan.id')
                     ->join('header_laporan', 'log_pakan.id_header_laporan', '=', 'header_laporan.id')
                     ->select('log_pakan.id_pakan', 'pakan.nama', 'pakan.jenis', DB::raw("(
-                        COALESCE((SELECT sum(jumlah) as keluar FROM `log_pakan` as b where status = 'Masuk'  and id_pakan = log_pakan.id_pakan and id_header_laporan = log_pakan.id_header_laporan group by id_pakan), 0)
+                        COALESCE((SELECT sum(jumlah) as keluar FROM `log_pakan` as b where status = 'masuk'  and id_pakan = log_pakan.id_pakan and id_header_laporan = log_pakan.id_header_laporan group by id_pakan), 0)
                         -
                         COALESCE((SELECT sum(jumlah) as keluar FROM `log_pakan` as b where status = 'keluar' and id_pakan = log_pakan.id_pakan and id_header_laporan = log_pakan.id_header_laporan group by id_pakan), 0)
                      ) as jumlah"))
