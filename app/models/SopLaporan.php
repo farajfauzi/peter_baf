@@ -13,7 +13,9 @@ class SopLaporan extends \Eloquent {
 
 	protected $hidden = ['hapus'];
 	// Don't forget to fill this array
-	protected $fillable = [];
+	protected $fillable = [
+		'status'
+	];
 
 	public function nilai()
 	{

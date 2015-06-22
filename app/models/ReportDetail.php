@@ -10,6 +10,13 @@ class ReportDetail extends \Eloquent {
 	];
 
 	// Don't forget to fill this array
-	protected $fillable = [];
+	protected $fillable = [
+		'id_header_laporan',
+		'tanggal',
+		'mortalitas',
+		'morbilitas',
+		'populasi_akhir',
+		'bobot'
+	];
 
 }

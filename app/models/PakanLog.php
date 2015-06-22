@@ -12,7 +12,12 @@ class PakanLog extends \Eloquent {
 	];
 
 	// Don't forget to fill this array
-	protected $fillable = [];
+	protected $fillable = [
+		'id_pakan',
+		'id_header_laporan',
+		'status',
+		'jumlah'
+	];
 
 	public function pakan()
 	{

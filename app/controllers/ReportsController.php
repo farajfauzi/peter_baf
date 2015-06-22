@@ -33,16 +33,82 @@ class ReportsController extends \BaseController {
 	 */
 	public function store()
 	{
-		$validator = Validator::make($data = Input::all(), Report::$rules);
+		try {
+	        if ($user = \JWTAuth::parseToken()->authenticate()) {
+	        	
+	        	$bobot 			= Input::get('bobot');
+				$id 			= Input::get('id_header_laporan');
+				$jumlah_pakan 	= Input::get('jumlah_pakan');
+				$morbilitas 	= Input::get('morbilitas');
+				$mortalitas 	= Input::get('mortalitas');
+				$pakan 			= Input::get('pakan');
+				$tanggal 		= \Carbon\Carbon::parse(\Input::get('tanggal'))->addDay()->format('Y/m/d');
+				$selectedSop 	= Input::get('selectedSop');
 
-		if ($validator->fails())
-		{
-			return Redirect::back()->withErrors($validator)->withInput();
-		}
+	        	$response = Report::findOrFail($id);
+				if ($response->id_petugas_pj != $user->id) {
+					throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+				}
 
-		Report::create($data);
+				if ($response->status != 0) {
+					throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+				}
 
-		return Redirect::route('reports.index');
+				// cek apa sudah ada detail laporan di hari itu
+				$is_exists = ReportDetail::where('id_header_laporan', $id)->where('tanggal', $tanggal)->count();
+				if ($is_exists > 0) {
+					throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+				}
+
+				$detail_terakhir = ReportDetail::where('id_header_laporan', $id)->where('tanggal', '<', $tanggal)->orderBy('tanggal', 'desc')->first();
+
+				$reportDetail = new ReportDetail();
+				$reportDetail->id_header_laporan = $id;
+				$reportDetail->tanggal = $tanggal;
+				$reportDetail->mortalitas = $mortalitas;
+				$reportDetail->morbilitas = $morbilitas;
+				$reportDetail->populasi_akhir = $detail_terakhir->populasi_akhir - $mortalitas;
+				$reportDetail->bobot = $bobot;
+				$reportDetail->save();
+
+				// detail laporan terdampak
+				$detail_laporan_terdampak = ReportDetail::where('id_header_laporan', $id)->where('tanggal', '>', $tanggal)->orderBy('tanggal', 'desc')->get();
+				foreach ($detail_laporan_terdampak as $dlt) {
+					$temp = ReportDetail::find($dlt['id']);
+					$temp->populasi_akhir = $temp->populasi_akhir - $mortalitas;
+					$temp->save();
+				};
+
+				$logPakan = new PakanLog();
+				$logPakan->id_pakan = $pakan;
+				$logPakan->id_header_laporan = $id;
+				$logPakan->tanggal = $tanggal;
+				$logPakan->status = 'Keluar';
+				$logPakan->jumlah = $jumlah_pakan;
+				$logPakan->save();
+
+				SopLaporan::whereIn('id', $selectedSop)->update(['status' => 1]);
+
+				$response = Report::findOrFail($id);
+				return $this->response->array($response->toArray());
+	        }
+	    } catch (\Exception $e) {
+	    	return $e;
+	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+	    }
+
+
+
+		// $validator = Validator::make($data = Input::all(), Report::$rules);
+
+		// if ($validator->fails())
+		// {
+		// 	return Redirect::back()->withErrors($validator)->withInput();
+		// }
+
+		// Report::create($data);
+
+		// return Redirect::route('reports.index');
 	}
 
 	/**
@@ -72,15 +138,44 @@ class ReportsController extends \BaseController {
 						}
 					)
 				)->findOrFail($id);
+				if ($response->id_petugas_pj != $user->id) {
+					throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+				}
+
+				if ($response->status != 0) {
+					throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+				}
+				
 				$response['jumlah_sop_aktif'] = SopLaporan::where('id_header_laporan', $id)->where('status', 1)->count();
+				$response['sop_non_aktif'] = SopLaporan::with('nilai')->where('id_header_laporan', $id)->where('status', 0)->get();
 				$response['laporan_sop'] = SopLaporan::with('nilai')->where('id_header_laporan', $id)->where('status', 1)->get();
-				$response['sisa_populasi'] = ReportDetail::where('id_header_laporan', $id)->orderBy('id', 'desc')->first()->populasi_akhir;
 				$response['jumlah_pakan_sekarang'] = Report::jumlahPakanSekarang($id);
 					$created = new Carbon\Carbon($response->tgl_masuk);
 					$now = \Carbon\Carbon::now();
 					$usia_dalam_hari = ($created->diff($now)->days < 1) ? 1 : $created->diffInDays($now) + 1;
 					$usia_dalam_minggu = ($created->diff($now)->days < 7) ? 1 : $created->diffInWeeks($now) + 1;
 				$response['usia_ternak'] = $usia_dalam_hari;
+				
+				$detail_terakhir = ReportDetail::where('id_header_laporan', $id)->orderBy('tanggal', 'desc')->first();
+				$bobot_akhir = $detail_terakhir->bobot;
+				$populasi_akhir = $detail_terakhir->populasi_akhir;
+				$jumlah_konsumsi_pakan = Report::jumlah_pakan_pakai($id);
+				$bobot_awal_fcr = $response->bobot_doc * $response->populasi_awal;
+				$bobot_akhir_fcr = $bobot_akhir * $populasi_akhir;
+				$bobot_hasil_fcr = $bobot_akhir_fcr - $bobot_awal_fcr;
+				if ($bobot_hasil_fcr > 0) {
+					$fcr = ($jumlah_konsumsi_pakan / ($bobot_hasil_fcr));
+					$fcr = round($fcr, 2);
+				} else {
+					$fcr = 0;
+				}
+
+				$deplesi = (($response->populasi_awal - $populasi_akhir) * 100);
+
+				$response['deplesi'] = $deplesi;
+
+				$response['sisa_populasi'] = $populasi_akhir;
+				$response['fcr'] = $fcr;
 
 				$bobot_per_minggu = array();
 				$mortalitas_per_minggu = array();
@@ -112,8 +207,8 @@ class ReportsController extends \BaseController {
 				return $this->response->array($response->toArray());
 	        }
 	    } catch (\Exception $e) {
+	    	return $e;
 	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
-	    	
 	    }
 	}
 }

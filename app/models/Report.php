@@ -54,6 +54,15 @@ class Report extends \Eloquent {
                     ->get();
     }
 
+    public static function jumlah_pakan_pakai($id_header_laporan)
+    {
+        return DB::table('log_pakan')
+                    ->select('*')
+                    ->where('log_pakan.id_header_laporan', $id_header_laporan)
+                    ->where('log_pakan.status', 'keluar')
+                    ->sum('jumlah');
+    }
+
     public function log_pakan()
     {
         return $this->hasMany('PakanLog', 'id_header_laporan', 'id');
@@ -89,4 +98,6 @@ class Report extends \Eloquent {
                     ->orderBy('tanggal', 'desc')
                     ->sum('morbilitas');
     }
+
+
 }
