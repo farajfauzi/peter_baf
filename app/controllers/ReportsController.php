@@ -93,22 +93,8 @@ class ReportsController extends \BaseController {
 				return $this->response->array($response->toArray());
 	        }
 	    } catch (\Exception $e) {
-	    	return $e;
 	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
 	    }
-
-
-
-		// $validator = Validator::make($data = Input::all(), Report::$rules);
-
-		// if ($validator->fails())
-		// {
-		// 	return Redirect::back()->withErrors($validator)->withInput();
-		// }
-
-		// Report::create($data);
-
-		// return Redirect::route('reports.index');
 	}
 
 	/**
@@ -207,7 +193,6 @@ class ReportsController extends \BaseController {
 				return $this->response->array($response->toArray());
 	        }
 	    } catch (\Exception $e) {
-	    	return $e;
 	    	throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
 	    }
 	}
